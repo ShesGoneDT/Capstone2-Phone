@@ -67,15 +67,16 @@
       <div class="row">
         <div class="col-md-8">
           <!-- BEGIN BUTTOM THÊM MỚI -->
-          <button id="btnThemSP" class="btn btn-success" data-toggle="modal" data-target="#myModal" onclick="prepareForCreate()">
+          <button id="btnThemSP" class="btn btn-success" data-toggle="modal" data-target="#myModal"
+            onclick="prepareForCreate()">
             <i class="fa fa-plus mr-1"></i> Thêm Mới </button>
           <!-- END BUTTON THÊM MỚI -->
         </div>
         <div class="col-md-4">
           <!-- BEGIN TÌM KIẾM -->
           <div class="input-group mb-3">
-            <input type="text" class="form-control" placeholder="Nhập từ khóa" aria-label="Recipient's username"
-              aria-describedby="basic-addon2" />
+            <input type="text" class="form-control" id="searchInput" placeholder="Nhập tên sản phẩm"
+              aria-label="Recipient's username" aria-describedby="basic-addon2" oninput="searchProductByName()" />
             <div class="input-group-append">
               <span class="input-group-text" id="basic-addon2"><i class="fa fa-search"></i></span>
             </div>
@@ -90,7 +91,13 @@
           <thead>
             <th>ID</th>
             <th>NAME</th>
-            <th>PRICE</th>
+            <th>
+              <select id="sortPrice" class="form-control" onchange="sortProductsByPrice()">
+                <option value="default">Giá: Mặc định</option>
+                <option value="asc">Giá tăng dần</option>
+                <option value="desc">Giá giảm dần</option>
+              </select>
+            </th>
             <th>SCREEN</th>
             <th>BACKCAMERA</th>
             <th>FRONTCAMERA</th>
@@ -98,9 +105,9 @@
             <th>DESC</th>
             <th>
               <select id="productFilter" onchange="filterProducts()">
-                <option value="all">Tất cả</option>
-                <option value="samsung">Samsung</option>
-                <option value="iphone">iPhone</option>
+                <option value="All">Tất cả</option>
+                <option value="Samsung">Samsung</option>
+                <option value="Iphone">Iphone</option>
               </select>
               <div id="productList"></div>
             </th>

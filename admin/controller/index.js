@@ -15,6 +15,8 @@ axios({
     });
 
 
+
+
 function fetchProducts() {
     turnOnLoading();
     axios({
@@ -23,45 +25,47 @@ function fetchProducts() {
     })
         .then(function (res) {
             turnOffLoading();
-            console.log("🚀  file: index.js:17  res:", res);
-            renderSanPham(res.data);
+            allProducts = res.data; // Gán dữ liệu sản phẩm vào allProducts
+            renderSanPham(allProducts); // Hiển thị sản phẩm
         })
         .catch(function (err) {
             turnOffLoading();
             console.log("🚀  file: index.js:20  err:", err);
-        })
+        });
 }
 fetchProducts();
-
 
 function prepareForCreate() {
     // Đặt editedId về null để đảm bảo chế độ thêm mới
     editedId = null;
     // Xóa dữ liệu cũ trong các trường nhập liệu
     clearInput();
-    
+
 }
 
 function createProduct() {
     var product = layThongTinTuForm();
-    clearInput();
-    axios({
-        url: `${BASE_URL}/products`,
-        method: "POST",
-        data: product,
-    })
-        .then(function (res) {
-            // tắt module sau khi thành công
-            $("#myModal").modal("hide");
-            // clear data input sau khi thêm
-            clearInput();
-            console.log(res);
-            // lấy data sau khi thêm
-            fetchProducts();
+    var isValid = kiemTraRong(product.name, "spanten") & kiemTraRong(product.price, "spangia") & kiemTraRong(product.screen, "spanmanhinh") & kiemTraRong(product.backCamera, "spancamsau") & kiemTraRong(product.frontCamera, "spancamtruoc")
+    var isNumber = kiemTraSo(product.price, "spangia");
+    if (isValid & isNumber) {
+        axios({
+            url: `${BASE_URL}/products`,
+            method: "POST",
+            data: product,
         })
-        .catch(function (err) {
-            console.log("🚀  file: index.js:42  res:", err);
-        });
+            .then(function (res) {
+                // tắt module sau khi thành công
+                $("#myModal").modal("hide");
+                // clear data input sau khi thêm
+                clearInput();
+                console.log(res);
+                // lấy data sau khi thêm
+                fetchProducts();
+            })
+            .catch(function (err) {
+                console.log("🚀  file: index.js:42  res:", err);
+            });
+    }
 }
 
 // Xóa sản phẩm
@@ -81,15 +85,16 @@ function deleteProduct(id) {
 
 
 // Hàm để lọc sản phẩm
+var allProducts = []; // Khởi tạo mảng chứa tất cả sản phẩm
 function filterProducts() {
     var selectedType = document.getElementById("productFilter").value;
     var filteredProducts = allProducts.filter(function (product) {
-        if (selectedType === "all") {
+        if (selectedType === "All") {
             return true; // Hiển thị tất cả sản phẩm
         }
-        return product.type.toLowerCase() === selectedType.toLowerCase();
+        return product.type.toLowerCase() === selectedType.toLowerCase(); // Lọc theo loại sản phẩm
     });
-    renderSanPham(filteredProducts);
+    renderSanPham(filteredProducts); // Hiển thị sản phẩm đã được lọc
 }
 
 // lấy thông tin của sản phẩm dựa trên id để chuẩn bị cho việc chỉnh sửa
@@ -115,21 +120,53 @@ function editProduct(id) {
 
 function updateProduct() {
     var product = layThongTinTuForm();
+    var isValid = kiemTraRong(product.name, "spanten") & kiemTraRong(product.price, "spangia") & kiemTraRong(product.screen, "spanmanhinh") & kiemTraRong(product.backCamera, "spancamsau") & kiemTraRong(product.frontCamera, "spancamtruoc")
+    var isNumber = kiemTraSo(product.price, "spangia");
     // gọi api update sp theo id
-    axios({
-        url: `${BASE_URL}/products/${editedId}`,
-        method: "PUT",
-        data: product,
-    })
-        .then(function (res) {
-            console.log("🚀  file: res:", res);
-            // tắt modal sau khi cập nhật
-            $("#myModal").modal("hide");
-            fetchProducts();
-
+    if (isValid & isNumber) {
+        axios({
+            url: `${BASE_URL}/products/${editedId}`,
+            method: "PUT",
+            data: product,
         })
-        .catch(function (err) {
-            console.log("🚀  file: err:", err);
+            .then(function (res) {
+                console.log("🚀  file: res:", res);
+                // tắt modal sau khi cập nhật
+                $("#myModal").modal("hide");
+                fetchProducts();
 
+            })
+            .catch(function (err) {
+                console.log("🚀  file: err:", err);
+
+            });
+    }
+}
+
+function searchProductByName() {
+    var searchInput = document.getElementById("searchInput").value.toLowerCase();
+    var filteredProducts = allProducts.filter(function (product) {
+        return product.name.toLowerCase().includes(searchInput);
+    });
+    renderSanPham(filteredProducts); // Hiển thị sản phẩm sau khi tìm kiếm
+}
+
+function sortProductsByPrice() {
+    var sortValue = document.getElementById("sortPrice").value;
+    // Tạo bản sao của allProducts để sắp xếp mà không thay đổi dữ liệu gốc
+    var sortedProducts = [...allProducts]; 
+
+    if (sortValue === "asc") {
+        // Sắp xếp giá tăng dần
+        sortedProducts.sort(function (a, b) {
+            return a.price - b.price;
         });
+    } else if (sortValue === "desc") {
+        // Sắp xếp giá giảm dần
+        sortedProducts.sort(function (a, b) {
+            return b.price - a.price;
+        });
+    }
+
+    renderSanPham(sortedProducts); // Hiển thị sản phẩm đã được sắp xếp
 }

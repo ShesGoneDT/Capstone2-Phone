@@ -33,6 +33,7 @@ function layThongTinTuForm() {
     var hinhanh = document.getElementById("Img").value;
     var mota = document.getElementById("Desc").value;
     var loai = document.getElementById("Type").value;
+    
     return {
         name: ten,
         price: gia,
