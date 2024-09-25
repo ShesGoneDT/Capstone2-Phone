@@ -45,9 +45,8 @@ function prepareForCreate() {
 
 function createProduct() {
     var product = layThongTinTuForm();
-    var isValid = kiemTraRong(product.name, "spanten") & kiemTraRong(product.price, "spangia") & kiemTraRong(product.screen, "spanmanhinh") & kiemTraRong(product.backCamera, "spancamsau") & kiemTraRong(product.frontCamera, "spancamtruoc")
-    var isNumber = kiemTraSo(product.price, "spangia");
-    if (isValid & isNumber) {
+    var isValid = kiemTraRong(product.name, "spanten") & (kiemTraRong(product.price, "spangia") && kiemTraSo(product.price, "spangia")) & kiemTraRong(product.screen, "spanmanhinh") & kiemTraRong(product.backCamera, "spancamsau") & kiemTraRong(product.frontCamera, "spancamtruoc");
+    if (isValid) {
         axios({
             url: `${BASE_URL}/products`,
             method: "POST",
@@ -120,10 +119,9 @@ function editProduct(id) {
 
 function updateProduct() {
     var product = layThongTinTuForm();
-    var isValid = kiemTraRong(product.name, "spanten") & kiemTraRong(product.price, "spangia") & kiemTraRong(product.screen, "spanmanhinh") & kiemTraRong(product.backCamera, "spancamsau") & kiemTraRong(product.frontCamera, "spancamtruoc")
-    var isNumber = kiemTraSo(product.price, "spangia");
+    var isValid = kiemTraRong(product.name, "spanten") & (kiemTraRong(product.price, "spangia") && kiemTraSo(product.price, "spangia")) & kiemTraRong(product.screen, "spanmanhinh") & kiemTraRong(product.backCamera, "spancamsau") & kiemTraRong(product.frontCamera, "spancamtruoc");
     // gọi api update sp theo id
-    if (isValid & isNumber) {
+    if (isValid) {
         axios({
             url: `${BASE_URL}/products/${editedId}`,
             method: "PUT",
