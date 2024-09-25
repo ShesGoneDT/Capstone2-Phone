@@ -151,22 +151,30 @@ function searchProductByName() {
     renderSanPham(filteredProducts); // Hiển thị sản phẩm sau khi tìm kiếm
 }
 
+
 function sortProductsByPrice() {
     var sortValue = document.getElementById("sortPrice").value;
-    // Tạo bản sao của allProducts để sắp xếp mà không thay đổi dữ liệu gốc
-    var sortedProducts = [...allProducts]; 
+    
+    // Dùng danh sách sản phẩm đã lọc hoặc tìm kiếm để sắp xếp
+    var filteredProducts = allProducts.filter(function (product) {
+        var searchInput = document.getElementById("searchInput").value.toLowerCase();
+        var selectedType = document.getElementById("productFilter").value;
+        var isTypeMatch = selectedType === "All" || product.type.toLowerCase() === selectedType.toLowerCase();
+        var isNameMatch = product.name.toLowerCase().includes(searchInput);
 
+        return isTypeMatch && isNameMatch;
+    });
+
+    // Sắp xếp theo giá
     if (sortValue === "asc") {
-        // Sắp xếp giá tăng dần
-        sortedProducts.sort(function (a, b) {
+        filteredProducts.sort(function (a, b) {
             return a.price - b.price;
         });
     } else if (sortValue === "desc") {
-        // Sắp xếp giá giảm dần
-        sortedProducts.sort(function (a, b) {
+        filteredProducts.sort(function (a, b) {
             return b.price - a.price;
         });
     }
 
-    renderSanPham(sortedProducts); // Hiển thị sản phẩm đã được sắp xếp
+    renderSanPham(filteredProducts); // Hiển thị sản phẩm đã được sắp xếp
 }
